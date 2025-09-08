@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>لوحة الإدارة</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h2>لوحة إدارة الروابط</h2>
+  <button onclick="generateLinks(15)">إنشاء 15 رابط فريد</button>
+  <div id="linksList"></div>
+</div>
+<script src="script.js"></script>
+<script>
+window.onload = loadLinks;
+function generateLinks(count){
+  createLinks(count);
+  loadLinks();
+}
+function loadLinks(){
+  fetch('users.json')
+    .then(res => res.json())
+    .then(data => {
+      const div = document.getElementById('linksList');
+      div.innerHTML = '';
+      data.users.forEach(u => {
+        const link = `register.html?link=${u.id}`;
+        div.innerHTML += `<p><a href="${link}" target="_blank">${link}</a> - ${u.filled ? 'مكتمل' : 'فارغ'}</p>`;
+      });
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تسجيل المستخدم</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h2>تسجيل معلومات المستخدم</h2>
+  <input type="text" id="fullName" placeholder="الاسم الكامل">
+  <input type="text" id="jobTitle" placeholder="الوظيفة">
+  <input type="email" id="email" placeholder="الإيميل">
+  <input type="password" id="password" placeholder="كلمة المرور">
+  <input type="text" id="phone1" placeholder="رقم الهاتف 1">
+  <input type="text" id="phone2" placeholder="رقم الهاتف 2">
+  <input type="text" id="facebook" placeholder="رابط الفيسبوك">
+  <input type="text" id="instagram" placeholder="رابط الإنستجرام">
+  <input type="text" id="linkedin" placeholder="رابط لينكدإن">
+  <input type="text" id="whatsapp" placeholder="رابط واتساب">
+  <input type="text" id="tiktok" placeholder="رابط تيكتوك">
+  <input type="url" id="photoUrl" placeholder="رابط صورة البروفايل">
+  <button onclick="saveUser()">حفظ البيانات</button>
+  <button onclick="downloadVCF()">تحميل VCF</button>
+</div>
+<script src="script.js"></script>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('link');
+window.onload = loadUser;
+function loadUser(){
+  fetch('users.json')
+    .then(res => res.json())
+    .then(data => {
+      const user = data.users.find(u => u.id === userId);
+      if(user){
+        document.getElementById('fullName').value = user.fullName;
+        document.getElementById('jobTitle').value = user.jobTitle;
+        document.getElementById('email').value = user.email;
+        document.getElementById('password').value = user.password;
+        document.getElementById('phone1').value = user.phone1;
+        document.getElementById('phone2').value = user.phone2;
+        document.getElementById('facebook').value = user.facebook;
+        document.getElementById('instagram').value = user.instagram;
+        document.getElementById('linkedin').value = user.linkedin;
+        document.getElementById('whatsapp').value = user.whatsapp;
+        document.getElementById('tiktok').value = user.tiktok;
+        document.getElementById('photoUrl').value = user.photoUrl;
+      }
+    });
+}
+function saveUser(){
+  fetch('users.json')
+    .then(res => res.json())
+    .then(data => {
+      const user = data.users.find(u => u.id === userId);
+      if(user){
+        user.fullName = document.getElementById('fullName').value;
+        user.jobTitle = document.getElementById('jobTitle').value;
+        user.email = document.getElementById('email').value;
+        user.password = document.getElementById('password').value;
+        user.phone1 = document.getElementById('phone1').value;
+        user.phone2 = document.getElementById('phone2').value;
+        user.facebook = document.getElementById('facebook').value;
+        user.instagram = document.getElementById('instagram').value;
+        user.linkedin = document.getElementById('linkedin').value;
+        user.whatsapp = document.getElementById('whatsapp').value;
+        user.tiktok = document.getElementById('tiktok').value;
+        user.photoUrl = document.getElementById('photoUrl').value;
+        user.filled = true;
+        alert("تم حفظ البيانات بنجاح!");
+      }
+    });
+}
+function downloadVCF(){
+  fetch('users.json')
+    .then(res => res.json())
+    .then(data => {
+      const user = data.users.find(u => u.id === userId);
+      if(user){
+        const vcf = `BEGIN:VCARD
+VERSION:3.0
+FN:${user.fullName}
+TITLE:${user.jobTitle}
+TEL;TYPE=WORK,VOICE:${user.phone1}
+TEL;TYPE=CELL:${user.phone2}
+EMAIL:${user.email}
+URL:${user.linkedin}
+PHOTO;VALUE=URL:${user.photoUrl}
+END:VCARD`;
+        const blob = new Blob([vcf], {type:'text/vcard'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "contact.vcf";
+        a.click();
+      }
+    });
+}
+</script>
